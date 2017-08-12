@@ -623,5 +623,5 @@ public class AbstractPitMojo extends AbstractMojo {
       return Collections.unmodifiableList(reasons);
     }
   }
-
+  
 }
