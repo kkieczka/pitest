@@ -8,14 +8,14 @@
 	<artifactId>pitest-parent</artifactId>
 	<packaging>pom</packaging>
 	<version>1.2.6-SNAPSHOT</version>
-	<name>pitest-parent</name>
+    <name>pitest-parent</name>
 	<url>http://pitest.org</url>
 	<description>Mutation testing system for java - parent project</description>
 	<scm>
 		<url>https://github.com/hcoles/pitest</url>
 		<connection>scm:git:git@github.com:hcoles/pitest.git</connection>
 		<developerConnection>scm:git:git@github.com:hcoles/pitest.git</developerConnection>
-		<tag>HEAD</tag>
+		<tag>pitest-parent-1.2.3</tag>
 	</scm>
 
 	<licenses>
