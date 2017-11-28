@@ -15,6 +15,7 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.coverage.TestInfo;
 import org.pitest.mutationtest.MutationConfig;
+import org.pitest.mutationtest.build.intercept.javafeatures.ForEachFilterTest.HasForEachLoop;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
@@ -168,6 +169,17 @@ public class MutationDiscoveryTest {
         
     assertThat(actual.size()).isLessThan(actualWithoutFilter.size());
   }
+  
+  @Test 
+  public void shouldFilterMutationsToForEachLoops() {
+    Collection<MutationDetails>  actual = findMutants(HasForEachLoop.class);
+    
+    data.setFeatures(Collections.singletonList("-FFEACH"));
+    Collection<MutationDetails> actualWithoutFilter = findMutants(HasForEachLoop.class);
+        
+    assertThat(actual.size()).isLessThan(actualWithoutFilter.size());
+  }
+
 
   
   public static class AnnotatedToAvoidMethod {
