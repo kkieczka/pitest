@@ -49,10 +49,13 @@ import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator.Choice;
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.AlwaysTrueHostnameVerifierMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.AlwaysTrustingTrustManagerMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiverMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveSwitchMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.VulnerableSSLContextProtocolMutator;
 
 public final class Mutator {
 
@@ -165,6 +168,30 @@ public final class Mutator {
      */
     add("EXPERIMENTAL_ARGUMENT_PROPAGATION",
         ArgumentPropagationMutator.ARGUMENT_PROPAGATION_MUTATOR);
+
+    /*+ K. Kieczka */
+    /**
+     * Experimental mutator that replaces a body of custom HostnameVerifier's verify() method
+     * to simple "return true;"
+     */
+    add("EXPERIMENTAL_ALWAYS_TRUE_HOSTNAME_VERIFIER",
+            AlwaysTrueHostnameVerifierMutator.ALWAYS_TRUE_HOSTNAME_VERIFIER_MUTATOR);
+
+    /**
+     * Experimental mutator that removes a body of custom TrustManager's
+     * checkServerTrusted() method
+     */
+    add("EXPERIMENTAL_ALWAYS_TRUSTING_TRUST_MANAGER",
+            AlwaysTrustingTrustManagerMutator.ALWAYS_TRUSTING_TRUST_MANAGER_MUTATOR);
+
+    /**
+     * Experimental mutator that changes protocol parameter of SSLContext.getInstance()
+     * to 'SSLv3', which is considered insecure
+     */
+    add("EXPERIMENTAL_VULNERABLE_SSL_CONTEXT_PROTOCOL",
+            VulnerableSSLContextProtocolMutator.VULNERABLE_SSL_CONTEXT_PROTOCOL_MUTATOR);
+
+    /*- K. Kieczka */
 
     /**
      * Experimental mutator that replaces method call with this
