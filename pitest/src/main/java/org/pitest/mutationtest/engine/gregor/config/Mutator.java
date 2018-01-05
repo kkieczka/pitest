@@ -51,6 +51,7 @@ import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.AlwaysTrueHostnameVerifierMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.AlwaysTrustingTrustManagerMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.HttpsToHttpMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiverMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveSwitchMutator;
@@ -190,6 +191,11 @@ public final class Mutator {
      */
     add("EXPERIMENTAL_VULNERABLE_SSL_CONTEXT_PROTOCOL",
             VulnerableSSLContextProtocolMutator.VULNERABLE_SSL_CONTEXT_PROTOCOL_MUTATOR);
+
+    /**
+     * Experimental mutator which replaces 'https' with 'http' at the beginnings of Strings
+     */
+    add("EXPERIMENTAL_HTTPS_TO_HTTP", HttpsToHttpMutator.HTTPS_TO_HTTP_MUTATOR);
 
     /*- K. Kieczka */
 
