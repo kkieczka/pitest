@@ -21,6 +21,7 @@ import org.pitest.extension.common.CompoundTestSuiteFinder;
 import org.pitest.functional.Option;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
+import org.pitest.junit.android.AndroidJUnitTestUnitFinder;
 import org.pitest.testapi.Configuration;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestSuiteFinder;
@@ -44,7 +45,8 @@ public class JUnitCompatibleConfiguration implements Configuration {
   public TestUnitFinder testUnitFinder() {
     return new CompoundTestUnitFinder(Arrays.asList(
         new JUnitCustomRunnerTestUnitFinder(config, excludedRunners),
-        new ParameterisedJUnitTestFinder()));
+        new ParameterisedJUnitTestFinder(),
+        new AndroidJUnitTestUnitFinder()));
   }
 
   @Override

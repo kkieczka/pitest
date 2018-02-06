@@ -279,6 +279,16 @@
 			<version>1.7.5</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.jacoco</groupId>
+			<artifactId>org.jacoco.core</artifactId>
+			<version>0.8.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jacoco</groupId>
+			<artifactId>org.jacoco.report</artifactId>
+			<version>0.8.0</version>
+		</dependency>
 
 	</dependencies>
 

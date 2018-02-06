@@ -51,6 +51,9 @@ public final class CodeCoverageStore {
   // investigated
   private static final Map<Integer, boolean[]> CLASS_HITS        = new ConcurrentHashMap<>();
 
+  // the map between currently active classes IDs and classes names
+  private static final Map<String, Integer> CLASS_NAMES            = new ConcurrentHashMap<>();
+
   public static void init(final InvokeReceiver invokeQueue) {
     CodeCoverageStore.invokeQueue = invokeQueue;
   }
@@ -581,6 +584,7 @@ public final class CodeCoverageStore {
   public static int registerClass(final String className) {
     final int id = nextId();
     invokeQueue.registerClass(id, className);
+    CLASS_NAMES.put(className, id);
     return id;
   }
 
@@ -610,8 +614,19 @@ public final class CodeCoverageStore {
     CLASS_HITS.put(classId, new boolean[probeCount + 1]);
   }
 
+  public static int getClassIdByName(final String className) {
+    Integer id = CLASS_NAMES.get(className);
+    return id != null ? id : -1;
+  }
+
+  public static int getProbesCount(final int id) {
+    boolean[] arr = CLASS_HITS.get(id);
+    return arr != null ? arr.length : -1;
+  }
+
   public static void resetAllStaticState() {
     CLASS_HITS.clear();
+    CLASS_NAMES.clear();
   }
 
 }

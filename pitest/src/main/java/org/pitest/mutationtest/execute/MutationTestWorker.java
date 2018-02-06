@@ -25,7 +25,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.pitest.classinfo.ClassName;
+import org.pitest.extension.common.TestUnitDecorator;
 import org.pitest.functional.F3;
+import org.pitest.junit.android.AndroidJUnitTestUnit;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.Mutant;
@@ -138,6 +140,24 @@ public class MutationTestWorker {
 
     final Container c = createNewContainer();
     final long t0 = System.currentTimeMillis();
+
+    // if there are Android instrumented tests, compile new version of the app
+    // with the mutant and push it to device/emulator before executing tests
+    boolean androidTestsPresent = false;
+    for (TestUnit tu : relevantTests) {
+      if (tu instanceof AndroidJUnitTestUnit
+              || (tu instanceof TestUnitDecorator
+                  && ((TestUnitDecorator)tu).child() instanceof AndroidJUnitTestUnit)) {
+        androidTestsPresent = true;
+        break;
+      }
+    }
+    AndroidPackageUpdater apu = null;
+    if (androidTestsPresent) {
+      apu = new AndroidPackageUpdater(mutatedClass);
+      apu.updatePackage();
+    }
+
     if (this.hotswap.apply(mutationId.getClassName(), this.loader,
         mutatedClass.getBytes())) {
       if (DEBUG) {
@@ -149,6 +169,9 @@ public class MutationTestWorker {
       LOG.warning("Mutation " + mutationId + " was not viable ");
       mutationDetected = new MutationStatusTestPair(0,
           DetectionStatus.NON_VIABLE);
+    }
+    if (androidTestsPresent) {
+      apu.restoreOriginalClass();
     }
     return mutationDetected;
   }
