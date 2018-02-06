@@ -57,6 +57,7 @@ import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncreme
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveSwitchMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.VulnerableSSLContextProtocolMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.XMLEnabledDoctypeParsingMutator;
 
 public final class Mutator {
 
@@ -191,6 +192,13 @@ public final class Mutator {
      */
     add("EXPERIMENTAL_VULNERABLE_SSL_CONTEXT_PROTOCOL",
             VulnerableSSLContextProtocolMutator.VULNERABLE_SSL_CONTEXT_PROTOCOL_MUTATOR);
+
+    /**
+     * Experimental mutator that enables XML DOCTYPE declarations parsing for created
+     * KXMLParser instances
+     */
+    add("EXPERIMENTAL_XML_ENABLED_DOCTYPE_PARSING",
+            XMLEnabledDoctypeParsingMutator.XML_ENABLED_DOCTYPE_PARSING_MUTATOR);
 
     /**
      * Experimental mutator which replaces 'https' with 'http' at the beginnings of Strings
