@@ -62,7 +62,7 @@ public class AndroidPackageUpdater {
       throw new RuntimeException("Could not determine current working directory");
     }
 
-    Path gradlewPath = Paths.get(cwd, "gradlew");
+    Path gradlewPath = Paths.get(cwd, "../gradlew"); // fixme
     if (Files.notExists(gradlewPath)) {
       throw new RuntimeException("Could not find gradle wrapper in current working directory. "
               + "Pitest should be run from app project's main directory.");

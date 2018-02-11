@@ -6,11 +6,17 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
+import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.jacoco.core.analysis.CoverageBuilder;
+import org.jacoco.core.tools.ExecFileLoader;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.commons.JSRInlinerAdapter;
+import org.objectweb.asm.tree.MethodNode;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
@@ -47,10 +53,34 @@ public class WrappingProcess {
         this.processArgs.getStdErr());
   }
 
+  private String getJacocoAndASMClassPaths() {
+    StringBuilder result = new StringBuilder();
+
+    List<Class<?>> jarsRepresentatives = Arrays.asList(
+            ExecFileLoader.class,
+            CoverageBuilder.class,
+            ClassVisitor.class,
+            JSRInlinerAdapter.class,
+            MethodNode.class
+    );
+
+    for (Class<?> clazz : jarsRepresentatives) {
+      CodeSource src = clazz.getProtectionDomain().getCodeSource();
+      if (src != null) {
+        result.append(":").append(src.getLocation().toString());
+      }
+    }
+    return result.toString();
+  }
+
   private void configureProcessBuilder(ProcessBuilder processBuilder,
       File workingDirectory, String initialClassPath,
       Map<String, String> environmentVariables) {
     processBuilder.directory(workingDirectory);
+
+    // add jacoco and ASM jars to minion's classpath
+    initialClassPath += getJacocoAndASMClassPaths();
+
     Map<String, String> environment = processBuilder.environment();
     environment.put("CLASSPATH", initialClassPath);
     
