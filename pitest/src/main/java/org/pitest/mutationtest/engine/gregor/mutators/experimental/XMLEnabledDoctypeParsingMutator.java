@@ -6,7 +6,6 @@ import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
-import org.pitest.util.Log;
 
 /**
  * The mutator which enables the parsing of XML DOCTYPE declarations by KXMLParser
@@ -56,16 +55,15 @@ public enum XMLEnabledDoctypeParsingMutator implements MethodMutatorFactory {
         */
 
         private boolean isParserCreation(String methodOwner, String methodName) {
-            Log.getLogger().info("XEDPM: Inside isParserCreation(): " + methodOwner + ", " + methodName);
+            // PITest uses relocation plugin which 'silently' moves certain packages (these
+            // used by PITest internally). One of them is org.xmlpull which is changed
+            // to org.pitest.reloc.xmlpull. It turns out, that string references to such
+            // class names are also somehow changed at some point during build.
+            // The construction below is a hack to avoid this behavior.
             String mo = "org";
             mo = mo.concat("/xmlpull/v1/XmlPullParserFactory");
-            boolean x1 = mo.equals(methodOwner);
-            //            org/xmlpull/v1/XmlPullParserFactory
-            boolean x2 = "newPullParser".equals(methodName);
-            Log.getLogger().info("XEDPM: vals: " + mo.length() + ", " + methodOwner.length());
-            boolean res = mo.equals(methodOwner) && "newPullParser".equals(methodName);
-            Log.getLogger().info("XEDPM: Returning: " + res);
-            return res;
+
+            return mo.equals(methodOwner) && "newPullParser".equals(methodName);
         }
 
         @Override
@@ -84,9 +82,17 @@ public enum XMLEnabledDoctypeParsingMutator implements MethodMutatorFactory {
         }
 
         private void createMutation() {
+            // PITest uses relocation plugin which 'silently' moves certain packages (these
+            // used by PITest internally). One of them is org.xmlpull which is changed
+            // to org.pitest.reloc.xmlpull. It turns out, that string references to such
+            // class names are also somehow changed at some point during build.
+            // The construction below is a hack to avoid this behavior.
+            String className = "org";
+            className = className.concat("/xmlpull/v1/XmlPullParser");
+
             this.mv.visitLdcInsn("http://xmlpull.org/v1/doc/features.html#process-docdecl");
             this.mv.visitInsn(Opcodes.ICONST_1);
-            this.mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, "org/xmlpull/v1/XmlPullParser",
+            this.mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, className,
                     "setFeature", "(Ljava/lang/String;Z)V", true);
 
             final MutationIdentifier newId = this.context.registerMutation(
