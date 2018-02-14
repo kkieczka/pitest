@@ -34,7 +34,7 @@ import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
 
-class MethodCallMethodVisitor extends MethodVisitor {
+public class MethodCallMethodVisitor extends MethodVisitor {
 
   private static final Map<Type, Integer>   RETURN_TYPE_MAP = new HashMap<>();
 
@@ -54,7 +54,7 @@ class MethodCallMethodVisitor extends MethodVisitor {
     RETURN_TYPE_MAP.put(Type.DOUBLE_TYPE, DCONST_0);
   }
 
-  MethodCallMethodVisitor(final MethodInfo methodInfo,
+  public MethodCallMethodVisitor(final MethodInfo methodInfo,
       final MutationContext context, final MethodVisitor writer,
       final MethodMutatorFactory factory,
       final F2<String, String, Boolean> filter) {

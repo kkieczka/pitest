@@ -57,7 +57,9 @@ import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncreme
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveSwitchMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.VulnerableSSLContextProtocolMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.XMLChangeGetAttributeValueParamMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.XMLEnabledDoctypeParsingMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.XMLRemoveRequireMutator;
 
 public final class Mutator {
 
@@ -204,6 +206,18 @@ public final class Mutator {
      * Experimental mutator which replaces 'https' with 'http' at the beginnings of Strings
      */
     add("EXPERIMENTAL_HTTPS_TO_HTTP", HttpsToHttpMutator.HTTPS_TO_HTTP_MUTATOR);
+
+    /**
+     * Experimental mutator which removes calls to XmlPullParser.require() methods
+     */
+    add("EXPERIMENTAL_XML_REMOVE_REQUIRE", XMLRemoveRequireMutator.XML_REMOVE_REQUIRE_MUTATOR);
+
+    /**
+     * Experimental mutator which changes parameter of XmlPullParser.getAttributeValue()
+     * call to 0
+     */
+    add("EXPERIMENTAL_XML_CHANGE_GET_ATTRIBUTE_VALUE",
+            XMLChangeGetAttributeValueParamMutator.XML_CHANGE_GET_ATTRIBUTE_VALUE_PARAM_MUTATOR);
 
     /*- K. Kieczka */
 
