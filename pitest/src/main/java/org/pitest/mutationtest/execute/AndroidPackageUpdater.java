@@ -76,6 +76,7 @@ public class AndroidPackageUpdater {
     pb.redirectErrorStream(true);
 
     try {
+      LOG.info("Repackaging and reinstalling the app...");
       Process gradlewProcess = pb.start();
       gradlewProcess.waitFor();
 
