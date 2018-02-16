@@ -53,6 +53,7 @@ import org.pitest.mutationtest.engine.gregor.mutators.experimental.AlwaysTrueHos
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.AlwaysTrustingTrustManagerMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.HttpsToHttpMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.JSONChangeDefaultValueMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.JSONChangeGetParamMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiverMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveSwitchMutator;
@@ -224,6 +225,12 @@ public final class Mutator {
      * Mutator which changes default values of JSONObject.opt*() method calls
      */
     add("EXPERIMENTAL_JSON_CHANGE_DEFAULT_VALUE", JSONChangeDefaultValueMutator.JSON_CHANGE_DEFAULT_VALUE);
+
+    /**
+     * Mutator which changes parameters of JSONObject.get*() calls to other ones
+     * taken from similar calls.
+     */
+    add("EXPERIMENTAL_JSON_CHANGE_GET_PARAM", JSONChangeGetParamMutator.JSON_CHANGE_GET_PARAM_MUTATOR);
 
     /*- K. Kieczka */
 
