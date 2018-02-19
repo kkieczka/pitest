@@ -8,6 +8,7 @@ import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.TestUnitFinder;
 
 import java.lang.reflect.Method;
+import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,6 +25,21 @@ public class AndroidJUnitTestUnitFinder implements TestUnitFinder {
     final RunWith runWith = clazz.getAnnotation(RunWith.class);
 
     if (runWith == null) {
+      String instrumentedTestsPathsStr = System.getenv("PITEST_ANDROID_INSTRUMENTED_TESTS_PATH");
+      if (instrumentedTestsPathsStr == null || instrumentedTestsPathsStr.isEmpty()) {
+        return Collections.emptyList();
+      }
+      String[] instrumentedTestsPaths = instrumentedTestsPathsStr.split(",");
+      CodeSource classSource = clazz.getProtectionDomain().getCodeSource();
+      if (classSource == null || classSource.getLocation() == null) {
+        return Collections.emptyList();
+      }
+      String classLocation = classSource.getLocation().getPath();
+      for (String path : instrumentedTestsPaths) {
+        if (classLocation.startsWith(path)) {
+          return getTestsFromClass(clazz);
+        }
+      }
       return Collections.emptyList();
     }
 

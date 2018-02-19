@@ -22,7 +22,7 @@ public enum AlwaysTrueHostnameVerifierMutator implements MethodMutatorFactory {
 
     public class AlwaysTrueHostnameVerifierMethodVisitor extends MethodVisitor {
 
-        private final MethodVisitor target;
+        //private final MethodVisitor target;
         private MutationContext context;
         private MethodMutatorFactory factory;
         private String methodName;
@@ -30,8 +30,8 @@ public enum AlwaysTrueHostnameVerifierMutator implements MethodMutatorFactory {
 
         public AlwaysTrueHostnameVerifierMethodVisitor(MethodMutatorFactory factory, MethodVisitor methodVisitor,
                                                        MutationContext ctx, String methodName) {
-            super(Opcodes.ASM5, null);
-            this.target = methodVisitor;
+            super(Opcodes.ASM6, methodVisitor);
+            //this.target = methodVisitor;
             this.context = ctx;
             this.factory = factory;
             this.methodName = methodName;
@@ -52,12 +52,22 @@ public enum AlwaysTrueHostnameVerifierMutator implements MethodMutatorFactory {
                 this.context.registerCurrentLine(line);
                 final MutationIdentifier newId = this.context.registerMutation(
                         this.factory, "Changed result of HostnameVerifier to constant true");
+                if (this.context.shouldMutate(newId)) {
+                    this.mv.visitLineNumber(line, start);
+                    this.mv.visitInsn(org.objectweb.asm.Opcodes.ICONST_1);
+                    this.mv.visitInsn(org.objectweb.asm.Opcodes.IRETURN);
+                    this.mv.visitMaxs(4, 1);
+                    this.mv.visitEnd();
+                } else {
+                    this.mv.visitLineNumber(line, start);
+                }
                 mutated = true;
+            } else {
+                this.mv.visitLineNumber(line, start);
             }
-            // super.visitLineNumber(line, start);
         }
 
-        @Override
+/*        @Override
         public void visitCode() {
 //            if () {
             if ("verify".equals(methodName)
@@ -83,7 +93,7 @@ public enum AlwaysTrueHostnameVerifierMutator implements MethodMutatorFactory {
                 this.mv.visitCode();
                 // Log.getLogger().log(Level.WARNING, "ATHV: not a verify() method");
             }
-        }
+        }*/
     }
 
     @Override

@@ -36,10 +36,14 @@ public enum HttpsToHttpMutator implements MethodMutatorFactory {
 
                 if (arg.toLowerCase().startsWith("https")) {
                     String modified = "http" + (arg.length() > 5 ? arg.substring(5) : "");
-                    this.mv.visitLdcInsn(modified);
 
                     final MutationIdentifier newId = this.context.registerMutation(
                             this.factory, "Changed 'https' to 'http' in String");
+                    if (this.context.shouldMutate(newId)) {
+                        this.mv.visitLdcInsn(modified);
+                    } else {
+                        this.mv.visitLdcInsn(cst);
+                    }
 
                 } else {
                     super.visitLdcInsn(cst);

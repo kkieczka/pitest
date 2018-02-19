@@ -30,7 +30,7 @@ public class JacocoCoverageReportGenerator {
 
     // make sure that given class is loaded (and thus present in CodeCoverageStore)
     try {
-      Class.forName(className.replace('/', '.'));
+      Class.forName(className.replace('/', '.'), false, this.getClass().getClassLoader());
     } catch (ClassNotFoundException e) {
       LOG.warning("Could not load class " + className);
     }

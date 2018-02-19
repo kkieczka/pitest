@@ -94,9 +94,6 @@ public enum XMLEnabledDoctypeParsingMutator implements MethodMutatorFactory {
             this.mv.visitInsn(Opcodes.ICONST_1);
             this.mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, className,
                     "setFeature", "(Ljava/lang/String;Z)V", true);
-
-            final MutationIdentifier newId = this.context.registerMutation(
-                    this.factory, "Added call to setFeature(FEATURE_PROCESS_DOCDECL, true)");
         }
 
         @Override
@@ -113,9 +110,14 @@ public enum XMLEnabledDoctypeParsingMutator implements MethodMutatorFactory {
                 // pass this store instruction through
                 this.mv.visitVarInsn(opcode, varNo);
 
-                // mutate: get the parser object and invoke setFeature() on it
-                this.mv.visitVarInsn(Opcodes.ALOAD, varNo);
-                createMutation();
+                final MutationIdentifier newId = this.context.registerMutation(
+                        this.factory, "Added call to setFeature(FEATURE_PROCESS_DOCDECL, true)");
+
+                if (this.context.shouldMutate(newId)) {
+                    // mutate: get the parser object and invoke setFeature() on it
+                    this.mv.visitVarInsn(Opcodes.ALOAD, varNo);
+                    createMutation();
+                }
 
             } else {
                 super.visitVarInsn(opcode, varNo);
@@ -133,8 +135,12 @@ public enum XMLEnabledDoctypeParsingMutator implements MethodMutatorFactory {
             // the parser (otherwise it would neither be assigned to any variable nor would be returned,
             // which would mean that the parser was created, but not intended to be used)
             if (opcode == Opcodes.ARETURN) {
-                this.mv.visitInsn(Opcodes.DUP);
-                createMutation();
+                final MutationIdentifier newId = this.context.registerMutation(
+                        this.factory, "Added call to setFeature(FEATURE_PROCESS_DOCDECL, true)");
+                if (this.context.shouldMutate(newId)) {
+                    this.mv.visitInsn(Opcodes.DUP);
+                    createMutation();
+                }
                 this.mv.visitInsn(opcode);
                 state = State.XML_PARSER_STORED;
 

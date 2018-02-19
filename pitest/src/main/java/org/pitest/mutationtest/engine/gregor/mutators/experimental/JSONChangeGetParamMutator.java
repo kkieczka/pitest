@@ -110,7 +110,6 @@ public enum JSONChangeGetParamMutator implements MethodMutatorFactory {
 
         @Override
         public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-
             if (isJSONGetCall(owner, name)) {
                 ArrayList<String> listOfParams = params.get(name);
                 if (listOfParams != null && listOfParams.size() > 0) {
@@ -133,15 +132,17 @@ public enum JSONChangeGetParamMutator implements MethodMutatorFactory {
                     }
 
                     // add current parameter to list, if it is unique
-                    if (!listOfParams.contains((String) currentParamObject)) {
+                    if (currentParamObject != null && !listOfParams.contains((String) currentParamObject)) {
                         listOfParams.add((String) currentParamObject);
                     }
 
                 } else {
                     // this is first call to get*() in this function, just add the parameter to
                     // list, assuming that it is a parameter for get*(), and return without mutating
-                    params.put(name, new ArrayList<String>());
-                    params.get(name).add((String)currentParamObject);
+                    if (currentParamObject != null) {
+                        params.put(name, new ArrayList<String>());
+                        params.get(name).add((String) currentParamObject);
+                    }
                     super.visitMethodInsn(opcode, owner, name, desc, itf);
                 }
             } else {

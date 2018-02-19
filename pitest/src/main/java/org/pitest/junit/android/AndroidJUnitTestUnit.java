@@ -208,14 +208,19 @@ public class AndroidJUnitTestUnit extends AbstractTestUnit {
 
     // get tested app's package name left by Pitest Gradle plugin
     // TODO make it static?
-    String pkgName = System.getenv("PITEST_ANDROID_PKGNAME");
-    if (pkgName == null) {
+    String testAppPkgName = System.getenv("PITEST_ANDROID_PKGNAME");
+    if (testAppPkgName == null) {
       throw new RuntimeException("No package name set");
     }
 
-    // the package containing instrumented tests has additional ".test" suffix
-    String originalPkgName = pkgName;
-    pkgName = pkgName + ".test";
+    String testedAppPkgName = System.getenv("PITEST_ANDROID_TESTED_APP_ID");
+    if (testedAppPkgName == null) {
+      throw new RuntimeException("No test package name set");
+    }
+    String testRunner = System.getenv("PITEST_ANDROID_INSTRUMENTATION_RUNNER");
+    if (testRunner == null) {
+      testRunner = ADB_JUNIT_RUNNER;
+    }
 
     // compose parameters for adb
     ArrayList<String> params = new ArrayList<>();
@@ -229,7 +234,7 @@ public class AndroidJUnitTestUnit extends AbstractTestUnit {
     params.add("-e coverage true"); // generate EMMA coverage file
     //params.add("-e coverageFile " + ADB_COVERAGE_FILE_DEV_PATH); // specify EMMA coverage file location
     params.add("-e class " + getDescription().getFirstTestClass() + "#" + getDescription().getName());
-    params.add(pkgName + "/" + ADB_JUNIT_RUNNER);
+    params.add(testAppPkgName + "/" + testRunner);
 
     ProcessBuilder pb = new ProcessBuilder(params);
     pb.redirectErrorStream(true);
@@ -249,7 +254,7 @@ public class AndroidJUnitTestUnit extends AbstractTestUnit {
       if (result.successfullyExecuted) {
 
         if (result.coverageFilePath != null) {
-          getCoverageInfo(result.coverageFilePath, originalPkgName);
+          getCoverageInfo(result.coverageFilePath, testedAppPkgName);
         } else {
           LOG.warning("Failed to get coverage info for " + getDescription().getName());
         }

@@ -44,9 +44,9 @@ public class JUnitCompatibleConfiguration implements Configuration {
   @Override
   public TestUnitFinder testUnitFinder() {
     return new CompoundTestUnitFinder(Arrays.asList(
+        new AndroidJUnitTestUnitFinder(),
         new JUnitCustomRunnerTestUnitFinder(config, excludedRunners),
-        new ParameterisedJUnitTestFinder(),
-        new AndroidJUnitTestUnitFinder()));
+        new ParameterisedJUnitTestFinder()));
   }
 
   @Override

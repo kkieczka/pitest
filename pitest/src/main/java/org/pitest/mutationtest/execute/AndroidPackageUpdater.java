@@ -37,6 +37,12 @@ public class AndroidPackageUpdater {
     if (classesPath == null) {
       throw new RuntimeException("No class files path set");
     }
+
+    String variantName = System.getenv("PITEST_ANDROID_VARIANT_NAME");
+    if (variantName == null) {
+      variantName = "Debug";
+    }
+
     String classNameWithSlashes = mutatedClass.getDetails().getId().getClassName().asInternalName();
     originalClassFilePath = Paths.get(classesPath, classNameWithSlashes + ".class");
 
@@ -71,7 +77,8 @@ public class AndroidPackageUpdater {
     // ./gradlew installDebug -x javaPreCompileDebug -x compileDebugJavaWithJavac
 
     ArrayList<String> gradlewProcessParams = new ArrayList<>(Arrays.asList(
-            gradlewPath.toString(), "installDebug", "-x", "javaPreCompileDebug", "-x", "compileDebugJavaWithJavac"));
+            gradlewPath.toString(), "install" + variantName, "-x", "javaPreCompile" + variantName,
+            "-x", "compile" + variantName + "JavaWithJavac"));
     ProcessBuilder pb = new ProcessBuilder(gradlewProcessParams);
     pb.redirectErrorStream(true);
 

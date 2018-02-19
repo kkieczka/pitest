@@ -23,7 +23,7 @@ public enum AlwaysTrustingTrustManagerMutator implements MethodMutatorFactory {
 
     public class AlwaysTrustingTrustManagerMethodVisitor extends MethodVisitor {
 
-        private final MethodVisitor target;
+        //private final MethodVisitor target;
         private MutationContext context;
         private MethodMutatorFactory factory;
         private String methodName;
@@ -31,14 +31,15 @@ public enum AlwaysTrustingTrustManagerMutator implements MethodMutatorFactory {
 
         public AlwaysTrustingTrustManagerMethodVisitor(MethodMutatorFactory factory, MethodVisitor methodVisitor,
                                                        MutationContext ctx, String methodName) {
-            super(Opcodes.ASM5, null);
-            this.target = methodVisitor;
+            super(Opcodes.ASM6, methodVisitor);
+            //this.target = methodVisitor;
             this.context = ctx;
             this.factory = factory;
             this.methodName = methodName;
         }
 
         private boolean shouldMutate() {
+            //Log.getLogger().warning("ATTM: " + methodName + ": " + context.getClassInfo().getName() + "! " + mutated);
             return "checkServerTrusted".equals(methodName)
                     && Arrays.asList(context.getClassInfo().getInterfaces()).contains("javax/net/ssl/X509TrustManager")
                     && !(context.getClassInfo().getName().startsWith("javax/net"))
@@ -54,11 +55,20 @@ public enum AlwaysTrustingTrustManagerMutator implements MethodMutatorFactory {
 
                 final MutationIdentifier newId = this.context.registerMutation(
                         this.factory, "Removed body of custom TrustManager");
+                if (this.context.shouldMutate(newId)) {
+                    this.mv.visitLineNumber(line, start);
+                    this.mv.visitInsn(Opcodes.RETURN);
+                    this.mv.visitEnd();
+                } else {
+                    this.mv.visitLineNumber(line, start);
+                }
                 mutated = true;
+            } else {
+                this.mv.visitLineNumber(line, start);
             }
         }
 
-        @Override
+/*        @Override
         public void visitCode() {
             if (shouldMutate()) {
                 this.target.visitCode();
@@ -69,7 +79,7 @@ public enum AlwaysTrustingTrustManagerMutator implements MethodMutatorFactory {
                 this.mv = target;
                 this.mv.visitCode();
             }
-        }
+        }*/
     }
 
     @Override

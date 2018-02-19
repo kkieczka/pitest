@@ -44,22 +44,27 @@ public enum VulnerableSSLContextProtocolMutator implements MethodMutatorFactory 
 
                 if ("(Ljava/lang/String;)Ljavax/net/ssl/SSLContext;".equals(desc)) {
                     // remove parameter (usually 'TLS' or 'Default') from stack and put 'SSLv3' there
-                    this.mv.visitInsn(Opcodes.POP);
-                    this.mv.visitLdcInsn("SSLv3");
                     final MutationIdentifier newId = this.context.registerMutation(
                             this.factory, "Changed parameter of SSLContext.getInstance() to 'SSLv3'");
+                    if (this.context.shouldMutate(newId)) {
+                        this.mv.visitInsn(Opcodes.POP);
+                        this.mv.visitLdcInsn("SSLv3");
+                    }
 
                 } else if ("(Ljava/lang/String;Ljava/lang/String;)Ljavax/net/ssl/SSLContext;".equals(desc)
                         || "(Ljava/lang/String;Ljava/security/Provider;)Ljavax/net/ssl/SSLContext;".equals(desc)) {
 
-                    // current operand stack state: [..., 'TLS', op2]
-                    this.mv.visitInsn(Opcodes.SWAP);    // op stack state: [..., op2, 'TLS']
-                    this.mv.visitInsn(Opcodes.POP);     // op stack state: [..., op2]
-                    this.mv.visitLdcInsn("SSLv3");  // op stack state: [..., op2, 'SSLv3']
-                    this.mv.visitInsn(Opcodes.SWAP);    // op stack state: [..., 'SSLv3', op2]
-
                     final MutationIdentifier newId = this.context.registerMutation(
                             this.factory, "Changed first parameter of SSLContext.getInstance() to 'SSLv3'");
+
+                    if (this.context.shouldMutate(newId)) {
+                        // current operand stack state: [..., 'TLS', op2]
+                        this.mv.visitInsn(Opcodes.SWAP);    // op stack state: [..., op2, 'TLS']
+                        this.mv.visitInsn(Opcodes.POP);     // op stack state: [..., op2]
+                        this.mv.visitLdcInsn("SSLv3");  // op stack state: [..., op2, 'SSLv3']
+                        this.mv.visitInsn(Opcodes.SWAP);    // op stack state: [..., 'SSLv3', op2]
+                    }
+
                 } else {
                     Log.getLogger().log(Level.WARNING, "Unknown variant of SSLContext.getInstance(): " + desc);
                 }

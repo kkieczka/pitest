@@ -19,9 +19,12 @@ import static org.pitest.functional.prelude.Prelude.or;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,6 +32,8 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.pitest.classpath.ClassFilter;
 import org.pitest.classpath.ClassPath;
@@ -240,7 +245,39 @@ public class ReportOptions {
 
       @Override
       public File apply(final String a) {
-        return new File(a);
+        if (a.endsWith(".aar")) {
+          // it's Android ZIP archive. Unpack "classes.jar" from it, put it in temp dir and return
+          // a File pointing to it
+          try {
+            ZipInputStream zis = new ZipInputStream(new FileInputStream(new File(a)));
+            ZipEntry entry = zis.getNextEntry();
+            while (entry != null) {
+              String fileName = entry.getName();
+              if (fileName.contains("classes.jar")) {
+                Path jarTmp = Files.createTempFile("pitest", ".tmp.jar");
+                FileOutputStream fos = new FileOutputStream(jarTmp.toFile());
+                int len;
+                byte[] buffer = new byte[1024];
+                while ((len = zis.read(buffer)) > 0) {
+                  fos.write(buffer, 0, len);
+                }
+                fos.close();
+                zis.closeEntry();
+                zis.close();
+                return jarTmp.toFile();
+              }
+              entry = zis.getNextEntry();
+            }
+            zis.closeEntry();
+            zis.close();
+            return new File(a);
+          } catch (IOException e) {
+            // unable to find or process the archive, fallback to returning the path
+            return new File(a);
+          }
+        } else {
+          return new File(a);
+        }
       }
 
     };
