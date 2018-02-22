@@ -51,6 +51,7 @@ import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.AlwaysTrueHostnameVerifierMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.AlwaysTrustingTrustManagerMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.EmptyTrustManagerMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.HttpsToHttpMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.JSONChangeDefaultValueMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.JSONChangeGetParamMutator;
@@ -189,6 +190,9 @@ public final class Mutator {
      */
     add("EXPERIMENTAL_ALWAYS_TRUSTING_TRUST_MANAGER",
             AlwaysTrustingTrustManagerMutator.ALWAYS_TRUSTING_TRUST_MANAGER_MUTATOR);
+
+    add("EXPERIMENTAL_EMPTY_TRUST_MANAGER",
+            EmptyTrustManagerMutator.ALWAYS_TRUSTING_TRUST_MANAGER_MUTATOR);
 
     /**
      * Experimental mutator that changes protocol parameter of SSLContext.getInstance()
